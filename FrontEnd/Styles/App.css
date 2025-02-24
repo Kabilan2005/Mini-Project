@@ -1,0 +1,26 @@
+body
+{
+  background-color: rgb(216, 183, 156);
+}
+
+div
+{
+  margin: 10px;
+  padding: auto;
+}
+
+input
+{
+  border: 2px solid black;
+}
+
+select
+{
+  border: 2px solid black;
+}
+
+::placeholder
+{
+  font-style: bold;
+  color: black;
+}

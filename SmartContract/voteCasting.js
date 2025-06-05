@@ -15,42 +15,42 @@ class VoteCasting extends Contract {
 
     async InitLedger(ctx) {
         const parties = [
-            {
-                ID: 'party1',
-                Symbol: 'Symbol1',
-                Leader: 'Leader1',
-                Votes: 0,
-            },
-            {
-                ID: 'party2',
-                Symbol: 'Symbol2',
-                Leader: 'Leader2',
-                Votes: 0,
-            },
-            {
-                ID: 'party3',
-                Symbol: 'Symbol3',
-                Leader: 'Leader3',
-                Votes: 0,
-            },
-            {
-                ID: 'party4',
-                Symbol: 'Symbol4',
-                Leader: 'Leader4',
-                Votes: 0,
-            },
-            {
-                ID: 'party5',
-                Symbol: 'Symbol5',
-                Leader: 'Leader5',
-                Votes: 0,
-            },
-            {
-                ID: 'party6',
-                Symbol: 'Symbol6',
-                Leader: 'Leader6',
-                Votes: 0,
-            },
+        //     {
+        //         ID: 'party1',
+        //         Symbol: 'Symbol1',
+        //         Leader: 'Leader1',
+        //         Votes: 0,
+        //     },
+        //     {
+        //         ID: 'party2',
+        //         Symbol: 'Symbol2',
+        //         Leader: 'Leader2',
+        //         Votes: 0,
+        //     },
+        //     {
+        //         ID: 'party3',
+        //         Symbol: 'Symbol3',
+        //         Leader: 'Leader3',
+        //         Votes: 0,
+        //     },
+        //     {
+        //         ID: 'party4',
+        //         Symbol: 'Symbol4',
+        //         Leader: 'Leader4',
+        //         Votes: 0,
+        //     },
+        //     {
+        //         ID: 'party5',
+        //         Symbol: 'Symbol5',
+        //         Leader: 'Leader5',
+        //         Votes: 0,
+        //     },
+        //     {
+        //         ID: 'party6',
+        //         Symbol: 'Symbol6',
+        //         Leader: 'Leader6',
+        //         Votes: 0,
+        //     },
         ];
 
         for (const party of parties) {
@@ -78,7 +78,7 @@ class VoteCasting extends Contract {
         };
         // we insert data in alphabetic order using 'json-stringify-deterministic' and 'sort-keys-recursive'
         await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(party))));
-        return JSON.stringify(asset);
+        return JSON.stringify(party);
     }
 
     // ReadAsset returns the asset stored in the world state with given id.
@@ -156,7 +156,7 @@ class VoteCasting extends Contract {
         return JSON.stringify(allResults);
     }
 
-    async CasteVote(ctx,id){
+    async CastVote(ctx,id){
         const partyString = await this.ReadParty(ctx, id);
         const party = JSON.parse(partyString);
         party.Votes = party.Votes+1;

@@ -90,7 +90,9 @@ const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org1.example.com');
 const utf8Decoder = new TextDecoder();
 // Decoder for converting binary responses from gRPC to human readable format (unit8Array) 
 
-var contract;
+let contract;
+let pollingActive = false;
+let authenticated = false;
 
 async function main() {
     displayInputParameters();
@@ -128,9 +130,10 @@ async function main() {
         // Get the smart contract from the network to interact with the network.
         contract = network.getContract(chaincodeName);
 
-        // await InitLedger(contract);
+        await InitLedger(contract);
 
-        await GetAllVotes(contract);
+    } catch (err) {
+        console.error("❌ Blockchain Initialization Error:", err);
     } finally {
         // gateway.close();
         // client.close();
@@ -205,30 +208,66 @@ async function GetAllVotes(contract) {
 }
 
 // Casting a Vote to a Party
-async function castVote(contract,id) {
+async function castVote(contract, id) {
     console.log(
         '\n--> Submit Transaction: CastVote, function cast vote to a party on the ledger'
     );
-    const votes=await contract.submitTransaction('CasteVote', id);
-    const VotesCount=utf8Decoder.decode(votes);
+    const votes = await contract.submitTransaction('CastVote', id);
+    const VotesCount = utf8Decoder.decode(votes);
     console.log(VotesCount);
 }
+
+// Biometric simulation
+
+app.post('/auth', (req, res) => {
+    console.log("Simulating biometric verification...");
+    setTimeout(() => {
+        authenticated = true;
+        res.json({ status: 'success', message: 'Authority Verified' });
+    }, 10000);
+});
+
+app.post('/add-party', async (req, res) => {
+    if (!authenticated) return res.status(403).json({ error: 'Unauthorized' });
+    const { id, symbol, leader } = req.body;
+    try {
+        await contract.submitTransaction('CreateParty', id, symbol, leader);
+        res.json({ status: 'success', message: `Party ${id} added` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/start-poll', (req, res) => {
+    if (!authenticated) return res.status(403).json({ error: 'Unauthorized' });
+    pollingActive = true;
+    res.json({ status: 'Polling Started' });
+});
+
+app.post('/stop-poll', (req, res) => {
+    if (!authenticated) return res.status(403).json({ error: 'Unauthorized' });
+    pollingActive = false;
+    res.json({ status: 'Polling Stopped' });
+});
 
 app.get('/get-message', (req, res) => {
     console.log(votes);
     GetAllVotes(contract);
-    res.json(votes); 
+    res.json(votes);
 });
 
-app.post('/cast-vote', (req,res)=>{
-    const id= req.body;
-    console.log("\nVoted for Party ",id);
-
-    res.json({ message: `Vote cast for ${id.id}` });
-    castVote(contract,id.id);
+app.post('/cast-vote', async (req, res) => {
+    if (!pollingActive) return res.status(403).json({ error: 'Polling not active' });
+    const id = req.body;
+    try {
+        const result = await contract.submitTransaction('CastVote', id.id);
+        res.json({ message: `Vote cast for ${id.id}` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
 
@@ -244,6 +283,7 @@ function displayInputParameters() {
     console.log(`certDirectoryPath: ${certDirectoryPath}`);
     console.log(`tlsCertPath:       ${tlsCertPath}`);
     console.log(`peerEndpoint:      ${peerEndpoint}`);
+    console.log(`peerHostAlias:     ${peerHostAlias}`);
     console.log(`peerHostAlias:     ${peerHostAlias}`);
 }
 

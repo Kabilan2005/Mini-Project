@@ -1,0 +1,117 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #FF9933, #FFFFFF,  #138808);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #054187;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #054187;
+    text-shadow: 1px 1px 0 #138808;
+    margin-bottom: 2rem;
+}
+
+#evmMachine {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(5, 65, 135, 0.15);
+}
+
+.partyCard {
+    background-color: #ffffff;
+    border: 2px solid #138808;
+    border-left: 8px solid #FF9933;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.partyCard:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(18, 136, 7, 0.3);
+}
+
+.partySymbol {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: #128807;
+}
+
+.partyName {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #054187;
+    margin-bottom: 0.5rem;
+}
+
+.partyLeader {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.voteBtn {
+    background-color: #FF9933;
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.voteBtn:hover:not(:disabled) {
+    background-color: #138808;
+}
+
+.voteBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#voteStatus {
+    margin-top: 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #d2691e;
+    text-align: center;
+    min-height: 1.2rem;
+}
+
+@media (max-width: 600px) {
+    #evmMachine {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        padding: 1rem;
+    }
+
+    .voteBtn {
+        font-size: 0.95rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}

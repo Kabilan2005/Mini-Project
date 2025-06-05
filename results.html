@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Election Results - Indian EVM Voting</title>
+  <link rel="stylesheet" href="results.css">
+</head>
+<body>
+  <h1>Current Election Results</h1>
+  <button id="refreshBtn">Refresh Results</button>
+  <table id="resultsTable">
+    <caption>Votes by Party</caption>
+    <thead>
+      <tr>
+        <th>Party ID</th>
+        <th>Symbol</th>
+        <th>Leader</th>
+        <th>Votes</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const resultsTableBody = document.querySelector('#resultsTable tbody');
+    
+        async function loadResults() {
+            try {
+                const res = await fetch('/get-message');
+                if (!res.ok) throw new Error('Failed to fetch results');
+                const votes = await res.json();
+    
+                resultsTableBody.innerHTML = '';
+    
+                votes.forEach(party => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${party.ID || party.id || '-'}</td>
+                        <td>${party.Symbol || party.symbol || '-'}</td>
+                        <td>${party.Leader || party.leader || '-'}</td>
+                        <td>${party.Votes || party.votes || 0}</td>
+                    `;
+                    resultsTableBody.appendChild(tr);
+                });
+            } catch (err) {
+                resultsTableBody.innerHTML = `<tr><td colspan="4">Error loading results.</td></tr>`;
+                console.error(err);
+            }
+        }
+    
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', loadResults);
+        }
+        loadResults();
+    });
+    </script>
+</body>
+</html>

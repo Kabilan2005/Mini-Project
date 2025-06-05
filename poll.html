@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Poll Control - Indian EVM Voting</title>
+    <link rel="stylesheet" href="poll.css">
+</head>
+
+<body>
+    <h1>🇮🇳 Poll Control Panel - Indian EVM Voting</h1>
+    <div class="controls">
+        <button id="startPollBtn">Start Poll</button>
+        <button id="stopPollBtn">Stop Poll</button>
+        <button id="endPollBtn">End Poll</button>
+    </div>
+    <div id="pollStatus">Polling is currently inactive.</div>
+
+    <h2>🗳️ Cast a Vote</h2>
+    <form id="voteForm">
+        <label for="partyId">Choose a Party:</label>
+        <select id="partyId" name="partyId" required>
+            <option value="">-- Select a Party --</option>
+        </select>
+        <button type="submit">Cast Vote</button>
+    </form>
+    <div id="voteStatus"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startPollBtn = document.getElementById('startPollBtn');
+            const stopPollBtn = document.getElementById('stopPollBtn');
+            const endPollBtn = document.getElementById('endPollBtn');
+            const pollStatus = document.getElementById('pollStatus');
+            const voteForm = document.getElementById('voteForm');
+            const voteStatus = document.getElementById('voteStatus');
+            const partySelect = document.getElementById('partyId');
+
+            function loadPartyOptions() {
+                try {
+                    const partyData = localStorage.getItem('pollParties');
+                    if (!partyData) {
+                        pollStatus.textContent = 'No party data found. Please start the election again.';
+                        return;
+                    }
+
+                    const parties = JSON.parse(partyData);
+                    partySelect.innerHTML = `<option value="">-- Select a Party --</option>`;
+                    parties.forEach(party => {
+                        const option = document.createElement('option');
+                        option.value = party.ID || party.id;
+                        option.textContent = `${party.ID || party.id} - ${party.Symbol || party.symbol}`;
+                        partySelect.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error("Failed to load parties:", err);
+                    pollStatus.textContent = 'Error loading party list.';
+                }
+            }
+
+
+            if (startPollBtn) {
+                startPollBtn.addEventListener('click', async () => {
+                    try {
+                        const partyData = localStorage.getItem('pollParties');
+                        const parties = JSON.parse(partyData);
+
+                        if (!Array.isArray(parties) || parties.length < 2) {
+                            pollStatus.textContent = 'At least 2 parties required to start the poll.';
+                            return;
+                        }
+
+                        const resStart = await fetch('/start-poll', { method: 'POST' });
+                        const dataStart = await resStart.json();
+
+                        pollStatus.textContent = dataStart.status || 'Poll started.';
+                        loadPartyOptions();
+                    } catch (err) {
+                        pollStatus.textContent = 'Error starting poll: ' + err.message;
+                        console.error(err);
+                    }
+                });
+            }
+
+
+            if (stopPollBtn) {
+                stopPollBtn.addEventListener('click', () => {
+                    fetch('/stop-poll', { method: 'POST' })
+                        .then(res => res.json())
+                        .then(data => {
+                            pollStatus.textContent = data.status || 'Poll stopped.';
+                        })
+                        .catch(err => {
+                            pollStatus.textContent = 'Error stopping poll.';
+                            console.error(err);
+                        });
+                });
+            }
+
+            if (endPollBtn) {
+                endPollBtn.addEventListener('click', () => {
+                    alert('Poll ended. Redirecting to results...');
+                    window.location.href = 'results.html';
+                });
+            }
+
+            if (voteForm && voteStatus) {
+                voteForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    voteStatus.textContent = 'Casting vote...';
+                    const partyId = partySelect.value;
+
+                    if (!partyId) {
+                        voteStatus.textContent = 'Please select a party.';
+                        return;
+                    }
+
+                    fetch('/cast-vote', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: partyId })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            voteStatus.textContent = data.message || data.error || 'Vote casted.';
+                        })
+                        .catch(err => {
+                            voteStatus.textContent = 'Error casting vote.';
+                            console.error(err);
+                        });
+
+                    voteForm.reset();
+                });
+            }
+            loadPartyOptions();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Add Party - Indian EVM Voting</title>
+    <link rel="stylesheet" href="add-party.css">
+</head>
+
+<body>
+    <h1>Add New Party</h1>
+
+    <button id="authBtn">Verify Authority (Simulate Biometric)</button>
+    <div id="authStatus">Not authenticated</div>
+
+    <form id="addPartyForm" style="display:none;">
+        <label for="partyId">Party ID:</label>
+        <input type="text" id="partyId" name="partyId" required />
+
+        <label for="partySymbol">Party Symbol:</label>
+        <input type="text" id="partySymbol" name="partySymbol" required />
+
+        <label for="partyLeader">Party Leader:</label>
+        <input type="text" id="partyLeader" name="partyLeader" required />
+
+        <button type="submit">Add Party</button>
+    </form>
+
+    <div id="addPartyStatus"></div>
+
+    <button id="startElectionBtn">Start Election</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authBtn = document.getElementById('authBtn');
+            const authStatus = document.getElementById('authStatus');
+            const addPartyForm = document.getElementById('addPartyForm');
+            const addPartyStatus = document.getElementById('addPartyStatus');
+            const stBtn = document.getElementById('startElectionBtn');
+
+            if (authBtn && authStatus && addPartyForm && addPartyStatus) {
+                authBtn.addEventListener('click', () => {
+                    authStatus.textContent = 'Verifying authority... Please wait 10 seconds.';
+                    fetch('/auth', { method: 'POST' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                authStatus.textContent = 'Authority Verified!';
+                                addPartyForm.style.display = 'block';
+                                authBtn.disabled = true;
+                            } else {
+                                authStatus.textContent = 'Authentication failed.';
+                            }
+                        })
+                        .catch(err => {
+                            authStatus.textContent = 'Error during authentication.';
+                            console.error(err);
+                        });
+                });
+
+                addPartyForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    addPartyStatus.textContent = 'Adding party...';
+
+                    const partyData = {
+                        id: addPartyForm.partyId.value.trim(),
+                        symbol: addPartyForm.partySymbol.value.trim(),
+                        leader: addPartyForm.partyLeader.value.trim(),
+                    };
+
+                    fetch('/add-party', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(partyData),
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                addPartyStatus.textContent = `Party ${partyData.id} added successfully.`;
+                                addPartyForm.reset();
+                            } else if (data.error) {
+                                addPartyStatus.textContent = 'Error: ' + data.error;
+                            }
+                        })
+                        .catch(err => {
+                            addPartyStatus.textContent = 'Error adding party.';
+                            console.error(err);
+                        });
+                });
+
+                stBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+
+                    try {
+                        const res = await fetch('/get-message');
+                        if (!res.ok) throw new Error('Failed to fetch party data');
+
+                        const parties = await res.json();
+
+                        if (!Array.isArray(parties) || parties.length < 2) {
+                            alert('At least 2 parties are required to start the election.');
+                            return;
+                        }
+
+                        localStorage.setItem('pollParties', JSON.stringify(parties));
+                        window.location.href = 'poll.html';
+                    } catch (err) {
+                        console.error('Error fetching parties:', err);
+                        alert('Unable to start election. Please try again later.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

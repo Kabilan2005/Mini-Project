@@ -1,0 +1,91 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom,#FF9933, #FFFFFF,  #138808);
+    justify-content: center;
+    align-items: center;
+    color: #054187;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .container {
+    background: white;
+    padding: 2.5rem 3rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(5, 65, 135, 0.15);
+    max-width: 600px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  h1 {
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: #054187;
+    text-shadow: 1px 1px 0 #138808;
+  }
+  
+  button#refreshBtn {
+    background-color: #FF9933;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  button#refreshBtn:hover {
+    background-color: #138808;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+  }
+  
+  th, td {
+    border: 1px solid #138808;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: #054187;
+  }
+  
+  th {
+    background-color: #FF9933;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 2px #054187;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  tbody tr:hover {
+    background-color: #e6ffe6;
+    cursor: default;
+  }
+  
+  @media (max-width: 600px) {
+    .container {
+      padding: 1.5rem 1rem;
+    }
+  
+    table, th, td {
+      font-size: 0.9rem;
+    }
+  
+    button#refreshBtn {
+      width: 100%;
+    }
+  }

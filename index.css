@@ -1,0 +1,107 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #FF9933, #FFFFFF, #138808);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #054187;
+    padding: 2rem;
+}
+
+.container {
+    background: white;
+    padding: 3rem 3.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(5, 65, 135, 0.15);
+    max-width: 480px;
+    width: 100%;
+}
+
+h1 {
+    margin-bottom: 2rem;
+    font-weight: 700;
+    color: #054187;
+    text-shadow: 1px 1px 0 #FF9933;
+}
+
+button {
+    background-color: #FF9933;
+    /* saffron */
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 0.7rem 0.5rem;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+    min-width: 140px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #138808;
+    /* green */
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+}
+
+button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+input[type="text"] {
+    padding: 12px 16px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 2px solid #054187;
+    width: 100%;
+    max-width: 320px;
+    margin: 0.7rem 0 1.5rem;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #FF9933;
+    outline: none;
+}
+
+#pollStatus,
+#voteStatus {
+    margin-top: 1.5rem;
+    font-weight: 700;
+    min-height: 26px;
+    color: #054187;
+    text-shadow: 0 0 3px #FF9933;
+}
+
+form {
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #054187;
+    margin-bottom: 0.3rem;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 2rem 1.5rem;
+    }
+
+    button {
+        min-width: 100%;
+    }
+
+    input[type="text"] {
+        max-width: 100%;
+    }
+}

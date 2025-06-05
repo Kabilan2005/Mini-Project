@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Indian EVM Voting - Authentication</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <h1>Welcome to Indian EVM Voting System</h1>
+  <p>Simulate biometric authentication by clicking the button:</p>
+  <button id="authBtn">Start Authentication</button>
+  <div id="status"></div>
+
+  <script>
+    const authBtn = document.getElementById('authBtn');
+    const status = document.getElementById('status');
+
+    authBtn.addEventListener('click', () => {
+      authBtn.disabled = true;
+      status.textContent = 'Verifying biometric data... please wait (10 seconds)';
+      
+      fetch('/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          status.textContent = data.message;
+          // Redirect to add-party page after authentication success
+          setTimeout(() => {
+            window.location.href = '/add-party.html';
+          }, 2000);
+        } else {
+          status.textContent = 'Authentication failed. Please try again.';
+          authBtn.disabled = false;
+        }
+      })
+      .catch(err => {
+        status.textContent = 'Error during authentication.';
+        authBtn.disabled = false;
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
